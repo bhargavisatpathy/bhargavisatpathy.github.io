@@ -1,0 +1,166 @@
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Bhargavi Satpathy - Ruby Dust</title><description>Thoughts, stories and ideas.</description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Fri, 24 Apr 2015 04:37:42 GMT</lastBuildDate><atom:link href="http://localhost:2368/author/bhargavi/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title>How to build a Ruby Gem?</title><description>&lt;h3 id="whatisagem"&gt;What is a Gem?&lt;/h3&gt;
+
+&lt;p&gt;A gem is essentially a Ruby plugin.&lt;/p&gt;
+
+&lt;p&gt;Ruby gems makes life much, much easier. Rather than including third party code directly into your application, you just reference the name (and optionally version) of the gem you want to use in your Gemfile, and then run  bundle install.&lt;/p&gt;
+
+&lt;p&gt;The bundler will load full set of dependencies needed by your application. The code for gem is still downloaded to your system, but it is kept separate from your application, so you don’t have to maintain it in the source control.&lt;/p&gt;
+
+&lt;h3 id="whyagem"&gt;Why a Gem?&lt;/h3&gt;
+
+&lt;p&gt;One of the most obvious reasons relates to code reuse. If you find yourself implementing the same feature over and over again across projects, there's a good chance that you've found the need for a gem.&lt;/p&gt;
+
+&lt;p&gt;Releasing a gem as open-source provides others the opportunity to contribute by adding features, addressing issues that you might have overlooked, and generally making your gem provide an all-around better experience for its users. &lt;/p&gt;
+
+&lt;h3 id="makingyourrubygem"&gt;Making your Ruby Gem&lt;/h3&gt;
+
+&lt;p&gt;If you haven't yet, you will need to install bundler gem like this&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gem install bundler&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, please follow the steps below:&lt;/p&gt;
+
+&lt;h6 id="step1generateaskeletonforyourgem"&gt;Step 1: Generate a skeleton for your gem&lt;/h6&gt;
+
+&lt;pre&gt;&lt;code&gt;$ bundle gem &amp;lt;gemname&amp;gt; &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;Don't put dashes in your gemname, underscores are ok&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;My gem name is codec62, so I did  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ bundle gem codec62 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The output I got is  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;create  codec62/Gemfile
+      create  codec62/Rakefile
+      create  codec62/LICENSE.txt
+      create  codec62/README.md
+      create  codec62/.gitignore
+      create  codec62/codec62.gemspec
+      create  codec62/lib/codec62.rb
+      create  codec62/lib/codec62/version.rb
+Initializing git repo in /Users/bhargavi/Turing/session4/codec62&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Gemfile&lt;/strong&gt; - track versions of all the dependencies our gem needs &lt;br&gt;
+&lt;strong&gt;Rakefile&lt;/strong&gt; - is to make tools for building things &lt;br&gt;
+&lt;strong&gt;License&lt;/strong&gt; - is for license, rubiest most fav is MIT license &lt;br&gt;
+&lt;strong&gt;Readme&lt;/strong&gt; - it’s a pretty ok read to start with &lt;br&gt;
+&lt;strong&gt;.gitignore&lt;/strong&gt; - decent ignore file for git so that we don't check bad things in. Normally, if you were building an app, you'd check this in, but when you're making a gem, you don’t &lt;br&gt;
+&lt;strong&gt;gemspec&lt;/strong&gt; - This file specifies all the metadata for our gem &lt;br&gt;
+&lt;strong&gt;lib/codec62&lt;/strong&gt; - is the file that is required when we say &lt;code&gt;require “codec62”&lt;/code&gt; in a ruby program &lt;br&gt;
+&lt;strong&gt;version.rb&lt;/strong&gt; -  has the version of our gem. we'll edit this file when we're about to release a new version of the gem. &lt;/p&gt;
+
+&lt;h6 id="step2settingthetestenvironment"&gt;Step 2: Setting the test environment&lt;/h6&gt;
+
+&lt;p&gt;cd into your gem directory and make a test directory and test file to write your tests  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd codec62 
+$ mkdir test 
+$ atom test/codec62_test.rb&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;I am using atom editor&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;We will also add these lines to our Rakefile&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;require "bundler/gem_tasks"
+
+require "rake/testtask"
+
+Rake::TestTask.new do |t|
+  t.test_files = FileList['test/*_test.rb']
+end
+
+task default: :test&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h6 id="step3tddforourgem"&gt;Step 3: TDD for our Gem&lt;/h6&gt;
+
+&lt;p&gt;Let's write some test in our &lt;strong&gt;test/codec62_test.rb&lt;/strong&gt; file  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;require "minitest/autorun"
+require "minitest/pride"
+require "codec62"
+
+class Codec62Test &lt; Minitest::Unit::TestCase
+  def test_codec62
+    assert_equal "This is my gem", Codec62::Message
+  end
+end&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our test will fail because we don't have any code in our &lt;strong&gt;lib/codec62.rb&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rake &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To pass our test we put this code in our &lt;strong&gt;lib/codec62.rb&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;require "codec62/version"
+
+module Codec62
+  Message = "This is my gem"
+end&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rake&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;Run options: --seed 34746
+\# Running tests:
+.
+Fabulous tests in 0.000821s, 1218.0268 tests/s, 1218.0268 assertions/s.
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h6 id="step4addinganexecutable"&gt;Step 4: Adding an executable&lt;/h6&gt;
+
+&lt;p&gt;Executables are stored in bin so we make directory bin&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir bin&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To make it executable we write this code into codec62 file in bin&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;\#!/usr/bin/env ruby
+
+require 'codec62'
+
+puts Codec62::Message&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is actually a script. We don't add an extension, but we do use a 'shebang' line to tell the shell that this is a Ruby script. We will make this file executable later after intalling our gem.&lt;/p&gt;
+
+&lt;h6 id="step5writingsomedoc"&gt;Step 5: Writing some doc&lt;/h6&gt;
+
+&lt;p&gt;Being a good programmer documentation is very important. We will add some comments to our &lt;strong&gt;lib/codec62.rb&lt;/strong&gt; and &lt;strong&gt;lib/codec62/version.rb&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Rdoc will parse these comments to generate documentation.  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;rdoc lib&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h6 id="step6pushtogithub"&gt;Step 6: Push to Github&lt;/h6&gt;
+
+&lt;p&gt;Before we push to github, let's fix our README.md file and codec62.gemspec. Change all the TODOs with documentation. Then push your work to github.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git add .
+$ git commit -m "my codec62 gem"
+$ git push &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h6 id="step7releasetorubygems"&gt;Step 7: Release to RubyGems&lt;/h6&gt;
+
+&lt;p&gt;Run this command to make your bin file executable  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ chmod +x bin/codec62&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and the install your rubygem by running this command  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rake install &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;If you have not updated your TODOs, rake install will not work&lt;/em&gt;
+Your Ruby Gem is still not released to the ruby community and is still private. To release change the version to 1.0.0 in your &lt;strong&gt;lib/codec62/version.rb&lt;/strong&gt; file, then  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ga .
+$ git commit -m "fixed the version"
+$ git push
+$ rake release&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Now your Ruby Gem is published!&lt;/em&gt;&lt;/strong&gt; &lt;br&gt;
+&lt;strong&gt;&lt;em&gt;Great&lt;/em&gt;!!&lt;/strong&gt; &lt;br&gt;
+&lt;strong&gt;&lt;em&gt;You can tell the whole world&lt;/em&gt;!!&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;references: &lt;br&gt;
+&lt;a href="https://howistart.org/posts/ruby/1"&gt;https://howistart.org/posts/ruby/1&lt;/a&gt;
+&lt;a href="https://quickleft.com/blog/engineering-lunch-series-step-by-step-guide-to-building-your-first-ruby-gem/"&gt;Quickleft doc&lt;/a&gt;&lt;/p&gt;</description><link>http://localhost:2368/how-to-build-a-ruby-gem/</link><guid isPermaLink="false">9df908f0-316f-46eb-a97c-f99a88f30fec</guid><dc:creator>Bhargavi Satpathy</dc:creator><pubDate>Fri, 24 Apr 2015 04:16:17 GMT</pubDate></item></channel></rss>

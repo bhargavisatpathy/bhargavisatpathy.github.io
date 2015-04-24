@@ -1,0 +1,288 @@
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>How to build a Ruby Gem?</title>
+    <meta name="description" content="">
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="../favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="../assets/css/screen.css?v=93712a4a90">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic%7COpen+Sans:700,400">
+
+    <link rel="canonical" href="http://localhost:2368/how-to-build-a-ruby-gem/">
+    
+    <meta property="og:site_name" content="Ruby Dust">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="How to build a Ruby Gem?">
+    <meta property="og:description" content="What is a Gem? A gem is essentially a Ruby plugin. Ruby gems makes life much, much easier. Rather than including third party code directly into your application, you just reference the name (and optionally version) of the gem you...">
+    <meta property="og:url" content="http://localhost:2368/how-to-build-a-ruby-gem/">
+    <meta property="article:published_time" content="2015-04-24T04:16:17.771Z">
+    <meta property="article:modified_time" content="2015-04-24T04:16:17.769Z">
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="How to build a Ruby Gem?">
+    <meta name="twitter:description" content="What is a Gem? A gem is essentially a Ruby plugin. Ruby gems makes life much, much easier. Rather than including third party code directly into your application, you just reference the name (and optionally version) of the gem you...">
+    <meta name="twitter:url" content="http://localhost:2368/how-to-build-a-ruby-gem/">
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Ruby Dust",
+    "author": {
+        "@type": "Person",
+        "name": "Bhargavi Satpathy",
+        "url": "http://localhost:2368/author/bhargavi",
+        "sameAs": null
+    },
+    "headline": "How to build a Ruby Gem?",
+    "url": "http://localhost:2368/how-to-build-a-ruby-gem/",
+    "datePublished": "2015-04-24T04:16:17.771Z",
+    "dateModified": "2015-04-24T04:16:17.769Z",
+    "description": "What is a Gem? A gem is essentially a Ruby plugin. Ruby gems makes life much, much easier. Rather than including third party code directly into your application, you just reference the name (and optionally version) of the gem you..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5">
+    <link rel="alternate" type="application/rss+xml" title="Ruby Dust" href="http://localhost:2368/rss/">
+</head>
+<body class="post-template">
+
+    
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="http://localhost:2368">Home</a>
+        <a class="subscribe-button icon-feed" href="http://localhost:2368/rss/">Subscribe</a>
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">How to build a Ruby Gem?</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-04-23">23 April 2015</time> 
+            </section>
+        </header>
+
+        <section class="post-content">
+            <h3 id="whatisagem">What is a Gem?</h3>
+
+<p>A gem is essentially a Ruby plugin.</p>
+
+<p>Ruby gems makes life much, much easier. Rather than including third party code directly into your application, you just reference the name (and optionally version) of the gem you want to use in your Gemfile, and then run  bundle install.</p>
+
+<p>The bundler will load full set of dependencies needed by your application. The code for gem is still downloaded to your system, but it is kept separate from your application, so you don’t have to maintain it in the source control.</p>
+
+<h3 id="whyagem">Why a Gem?</h3>
+
+<p>One of the most obvious reasons relates to code reuse. If you find yourself implementing the same feature over and over again across projects, there's a good chance that you've found the need for a gem.</p>
+
+<p>Releasing a gem as open-source provides others the opportunity to contribute by adding features, addressing issues that you might have overlooked, and generally making your gem provide an all-around better experience for its users. </p>
+
+<h3 id="makingyourrubygem">Making your Ruby Gem</h3>
+
+<p>If you haven't yet, you will need to install bundler gem like this</p>
+
+<pre><code>$ gem install bundler</code></pre>
+
+<p>Next, please follow the steps below:</p>
+
+<h6 id="step1generateaskeletonforyourgem">Step 1: Generate a skeleton for your gem</h6>
+
+<pre><code>$ bundle gem &lt;gemname&gt; </code></pre>
+
+<p><em>Don't put dashes in your gemname, underscores are ok</em></p>
+
+<p>My gem name is codec62, so I did  </p>
+
+<pre><code>$ bundle gem codec62 </code></pre>
+
+<p>The output I got is  </p>
+
+<pre><code>create  codec62/Gemfile
+      create  codec62/Rakefile
+      create  codec62/LICENSE.txt
+      create  codec62/README.md
+      create  codec62/.gitignore
+      create  codec62/codec62.gemspec
+      create  codec62/lib/codec62.rb
+      create  codec62/lib/codec62/version.rb
+Initializing git repo in /Users/bhargavi/Turing/session4/codec62</code></pre>
+
+<p><strong>Gemfile</strong> - track versions of all the dependencies our gem needs <br>
+<strong>Rakefile</strong> - is to make tools for building things <br>
+<strong>License</strong> - is for license, rubiest most fav is MIT license <br>
+<strong>Readme</strong> - it’s a pretty ok read to start with <br>
+<strong>.gitignore</strong> - decent ignore file for git so that we don't check bad things in. Normally, if you were building an app, you'd check this in, but when you're making a gem, you don’t <br>
+<strong>gemspec</strong> - This file specifies all the metadata for our gem <br>
+<strong>lib/codec62</strong> - is the file that is required when we say <code>require “codec62”</code> in a ruby program <br>
+<strong>version.rb</strong> -  has the version of our gem. we'll edit this file when we're about to release a new version of the gem. </p>
+
+<h6 id="step2settingthetestenvironment">Step 2: Setting the test environment</h6>
+
+<p>cd into your gem directory and make a test directory and test file to write your tests  </p>
+
+<pre><code>$ cd codec62 
+$ mkdir test 
+$ atom test/codec62_test.rb</code></pre>
+
+<p><em>I am using atom editor</em></p>
+
+<p>We will also add these lines to our Rakefile</p>
+
+<pre><code>require "bundler/gem_tasks"
+
+require "rake/testtask"
+
+Rake::TestTask.new do |t|
+  t.test_files = FileList['test/*_test.rb']
+end
+
+task default: :test</code></pre>
+
+<h6 id="step3tddforourgem">Step 3: TDD for our Gem</h6>
+
+<p>Let's write some test in our <strong>test/codec62_test.rb</strong> file  </p>
+
+<pre><code>require "minitest/autorun"
+require "minitest/pride"
+require "codec62"
+
+class Codec62Test </code></pre>
+
+<p>Our test will fail because we don't have any code in our <strong>lib/codec62.rb</strong></p>
+
+<pre><code>$ rake </code></pre>
+
+<p>To pass our test we put this code in our <strong>lib/codec62.rb</strong></p>
+
+<pre><code>require "codec62/version"
+
+module Codec62
+  Message = "This is my gem"
+end</code></pre>
+
+<pre><code>$ rake</code></pre>
+
+<pre><code>Run options: --seed 34746
+\# Running tests:
+.
+Fabulous tests in 0.000821s, 1218.0268 tests/s, 1218.0268 assertions/s.
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips</code></pre>
+
+<h6 id="step4addinganexecutable">Step 4: Adding an executable</h6>
+
+<p>Executables are stored in bin so we make directory bin</p>
+
+<pre><code>mkdir bin</code></pre>
+
+<p>To make it executable we write this code into codec62 file in bin</p>
+
+<pre><code>\#!/usr/bin/env ruby
+
+require 'codec62'
+
+puts Codec62::Message</code></pre>
+
+<p>This is actually a script. We don't add an extension, but we do use a 'shebang' line to tell the shell that this is a Ruby script. We will make this file executable later after intalling our gem.</p>
+
+<h6 id="step5writingsomedoc">Step 5: Writing some doc</h6>
+
+<p>Being a good programmer documentation is very important. We will add some comments to our <strong>lib/codec62.rb</strong> and <strong>lib/codec62/version.rb</strong></p>
+
+<p>Rdoc will parse these comments to generate documentation.  </p>
+
+<pre><code>rdoc lib</code></pre>
+
+<h6 id="step6pushtogithub">Step 6: Push to Github</h6>
+
+<p>Before we push to github, let's fix our README.md file and codec62.gemspec. Change all the TODOs with documentation. Then push your work to github.</p>
+
+<pre><code>$ git add .
+$ git commit -m "my codec62 gem"
+$ git push </code></pre>
+
+<h6 id="step7releasetorubygems">Step 7: Release to RubyGems</h6>
+
+<p>Run this command to make your bin file executable  </p>
+
+<pre><code>$ chmod +x bin/codec62</code></pre>
+
+<p>and the install your rubygem by running this command  </p>
+
+<pre><code>$ rake install </code></pre>
+
+<p><em>If you have not updated your TODOs, rake install will not work</em>
+Your Ruby Gem is still not released to the ruby community and is still private. To release change the version to 1.0.0 in your <strong>lib/codec62/version.rb</strong> file, then  </p>
+
+<pre><code>$ ga .
+$ git commit -m "fixed the version"
+$ git push
+$ rake release</code></pre>
+
+<p><strong><em>Now your Ruby Gem is published!</em></strong> <br>
+<strong><em>Great</em>!!</strong> <br>
+<strong><em>You can tell the whole world</em>!!</strong></p>
+
+<p>references: <br>
+<a href="https://howistart.org/posts/ruby/1">https://howistart.org/posts/ruby/1</a>
+<a href="https://quickleft.com/blog/engineering-lunch-series-step-by-step-guide-to-building-your-first-ruby-gem/">Quickleft doc</a></p>
+        </section>
+
+        <footer class="post-footer">
+
+
+
+            <section class="author">
+                <h4><a href="../author/bhargavi/">Bhargavi Satpathy</a></h4>
+
+                    <p>Read <a href="../author/bhargavi/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=How%20to%20build%20a%20Ruby%20Gem%3F&amp;url=http://localhost:2368/how-to-build-a-ruby-gem/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/how-to-build-a-ruby-gem/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/how-to-build-a-ruby-gem/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+    </article>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+         <section class="copyright"><a href="http://localhost:2368">Ruby Dust</a> © 2015</section>
+         <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+    </footer>
+
+    <script src="../public/jquery.js?v=93712a4a90"></script>
+
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=93712a4a90"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=93712a4a90"></script>
+
+</body>
