@@ -1,4 +1,186 @@
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Bhargavi Satpathy - Ruby Dust</title><description>Thoughts, stories and ideas.</description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Fri, 24 Apr 2015 04:37:42 GMT</lastBuildDate><atom:link href="http://localhost:2368/author/bhargavi/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title>How to build a Ruby Gem?</title><description>&lt;h3 id="whatisagem"&gt;What is a Gem?&lt;/h3&gt;
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Bhargavi Satpathy - Ruby Dust</title><description>Thoughts, stories and ideas.</description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Mon, 18 May 2015 04:24:44 GMT</lastBuildDate><atom:link href="http://localhost:2368/author/bhargavi/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title>Apache Kafka</title><description>&lt;p&gt;Kafka is a distributed, partitioned, replicated commit log service.It is also a high volume message oriented middleware. &lt;/p&gt;
+
+&lt;p&gt;Kafka maintains feeds of messages in categories called &lt;strong&gt;topics&lt;/strong&gt;. Processes that publish messages to a Kafka topic are called &lt;strong&gt;producers&lt;/strong&gt;. Processes that subscribe to topics and process the feed of published messages are called &lt;strong&gt;consumers&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;At a very basic level, a produce gives a text message(or binary) to Kafka server and it sends it to the consumer.&lt;/p&gt;
+
+&lt;p&gt;Traditional messaging middleaware has two delivery models: queue and publish-subscribe. In a queue, a pool of consumers may read from a server and each message goes to one of them; in publish-subscribe the message is broadcast to all consumers. However, Kafka offers a single consumer abstraction that generalizes both of these—&lt;em&gt;the consumer group&lt;/em&gt;. All the instances in a consumer group, perform the same logical operation to the messages they receive, giving high scalability. Each message published to a topic is delivered to &lt;em&gt;one&lt;/em&gt; consumer instance within each subscribing consumer group. &lt;/p&gt;
+
+&lt;p&gt;If all the consumer instances have the same consumer group, then this works just like a traditional queue balancing load over the consumers.&lt;/p&gt;
+
+&lt;p&gt;If all the consumer instances have different consumer groups, then this works like publish-subscribe and all messages are broadcast to all consumers.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="http://localhost:2368/content/images/2015/05/kafka.png" alt="Delivery Model"&gt;&lt;/p&gt;
+
+&lt;p&gt;With that let's get to it.&lt;/p&gt;
+
+&lt;h5 id="installstartkafka"&gt;Install/Start Kafka&lt;/h5&gt;
+
+&lt;p&gt;&lt;a href="https://www.apache.org/dyn/closer.cgi?path=/kafka/0.8.2.0/kafka_2.10-0.8.2.0.tgz"&gt;Download&lt;/a&gt; the tar-zip and un-tar it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; tar -xzf kafka_2.10-0.8.2.0.tgz
+&gt; cd kafka_2.10-0.8.2.0&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Start a ZooKeeper server (Kafka uses the zookeeper server). I used the convenience script that came with kafka to get a quick single-node ZooKeeper instance.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/zookeeper-server-start.sh config/zookeeper.properties
+[2015-04-22 15:01:37,495] INFO Reading configuration from: config/zookeeper.properties (org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now start the Kafka server  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-server-start.sh config/server.properties
+[2015-04-22 15:01:47,028] INFO Verifying properties (kafka.utils.VerifiableProperties)
+[2015-04-22 15:01:47,051] INFO Property socket.send.buffer.bytes is overridden to 1048576 (kafka.utils.VerifiableProperties)
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id="createatopic"&gt;Create a Topic&lt;/h4&gt;
+
+&lt;p&gt;I created a topic named "test" with a single partition and only one replica:  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can now see that topic if we run the list topic command:  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-topics.sh --list --zookeeper localhost:2181
+test&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Alternatively, instead of manually creating topics you can also configure your brokers to auto-create topics when a non-existent topic is published to.&lt;/p&gt;
+
+&lt;h4 id="sendmessages"&gt;Send Messages&lt;/h4&gt;
+
+&lt;p&gt;Kafka comes with a command line client that can take input and send it out as messages to the Kafka cluster. By default each line will be sent as a separate message. &lt;br&gt;
+We can see that by running the producer and then type a few messages into the console to send to the server.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test 
+This is a message
+This is another message&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id="startaconsumer"&gt;Start a consumer&lt;/h4&gt;
+
+&lt;p&gt;Kafka also has a command line consumer that will dump out messages to standard output.  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning
+This is a message
+This is another message&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id="settingupamultibrokercluster"&gt;Setting up a multi-broker cluster&lt;/h4&gt;
+
+&lt;p&gt;To get a feel for multi-broker cluster, we expand our cluster to three nodes on our local machine. &lt;br&gt;
+First we make a config file for each of the brokers:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; cp config/server.properties config/server-1.properties 
+&gt; cp config/server.properties config/server-2.properties&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We then edit these new files in he editor and set the following properties:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;config/server-1.properties:
+    broker.id=1
+    port=9093
+    log.dir=/tmp/kafka-logs-1
+
+config/server-2.properties:
+    broker.id=2
+    port=9094
+    log.dir=/tmp/kafka-logs-2&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The broker-id property is unique. We give unique port and log directory because we are running them on same machine.&lt;/p&gt;
+
+&lt;p&gt;We already have Zookeeper and our single node started, so we just need to start the two new nodes:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-server-start.sh config/server-1.properties &amp;
+...
+&gt; bin/kafka-server-start.sh config/server-2.properties &amp;
+...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then, we create a new topic with a replication factor of three:  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic my-replicated-topic&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can run the "describe topics" command to see which broker is doing what:  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
+Topic:my-replicated-topic    PartitionCount:1    ReplicationFactor:3 Configs:
+    Topic: my-replicated-topic  Partition: 0    Leader: 1   Replicas: 1,2,0 Isr: 1,2,0&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The first line gives a summary of all the partitions, each additional line gives information about one partition. Since we have only one partition for this topic there is only one line. &lt;br&gt;
+&lt;strong&gt;leader&lt;/strong&gt; is the node responsible for all reads and writes for the given partition. &lt;br&gt;
+&lt;strong&gt;replicas&lt;/strong&gt; is the list of nodes that replicate the log for this partition. &lt;br&gt;
+&lt;strong&gt;isr&lt;/strong&gt; is the set of "in-sync" replicas. This is the subset of the replicas list that is currently alive and caught-up to the leader. &lt;br&gt;
+In this example node 1 is the leader for the only partition of the topic. &lt;br&gt;
+We can run the same command on the original topic we created to see where it is:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic test
+Topic:test    PartitionCount:1    ReplicationFactor:1 Configs:
+    Topic: test Partition: 0    Leader: 0   Replicas: 0 Isr: 0&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If topic has no replicas and is on server 0, the only server in our cluster when we created it. &lt;br&gt;
+Let's publish a few messages to our new topic:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-replicated-topic
+...
+my test message 1
+my test message 2
+^C &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let's consume these messages:  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic my-replicated-topic
+...
+my test message 1
+my test message 2
+^C&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let's test out fault-tolerance. Broker 1 was acting as the leader so we kill it:  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; ps | grep server-1.properties
+7564 ttys002    0:15.91 /System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home/bin/java...
+&gt; kill -9 7564&lt;/code&gt;&lt;/pre&gt;
+When we run the "describe topics" command again we see that leadership has switched to one of the slaves and node 1 is no longer in the in-sync replica set:  
+
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
+Topic:my-replicated-topic    PartitionCount:1    ReplicationFactor:3 Configs:
+    Topic: my-replicated-topic  Partition: 0    Leader: 2   Replicas: 1,2,0 Isr: 2,0&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The messages are still be available for consumption throught the new leader as the original leader is down:  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&gt; bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic my-replicated-topic
+...
+my test message 1
+my test message 2
+^C&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id="rubyclientforkafkaposeidon"&gt;Ruby Client for Kafka - Poseidon&lt;/h4&gt;
+
+&lt;p&gt;Posiedon is kafka client. &lt;br&gt;
+Consuming and Producing implementations using Posiedon:&lt;/p&gt;
+
+&lt;h5 id="sendingmessagestokafka"&gt;Sending messages to Kafka&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code&gt;require 'poseidon'
+
+producer = Poseidon::Producer.new(["localhost:9092"], "my\_test\_producer")
+
+messages = []
+messages &lt;&lt; Poseidon::MessageToSend.new("topic1", "value1")
+messages &lt;&lt; Poseidon::MessageToSend.new("topic2", "value2")
+producer.send_messages(messages)&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id="fetchingmessagesfromkafka"&gt;Fetching messages from Kafka&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code&gt;require 'poseidon'
+
+consumer = Poseidon::PartitionConsumer.new("my_test_consumer", "localhost", 9092, "topic1", 0, :earliest_offset)
+
+loop do
+  messages = consumer.fetch
+  messages.each do |m|
+    puts m.value
+  end
+end&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;References: &lt;a href="http://kafka.apache.org/documentation.html#introduction"&gt;http://kafka.apache.org/documentation.html#introduction&lt;/a&gt;&lt;/p&gt;</description><link>http://localhost:2368/apache-kafka/</link><guid isPermaLink="false">47cb0998-81e4-4041-b918-95d2a7469d6d</guid><dc:creator>Bhargavi Satpathy</dc:creator><pubDate>Mon, 18 May 2015 04:16:39 GMT</pubDate></item><item><title>How to build a Ruby Gem?</title><description>&lt;h3 id="whatisagem"&gt;What is a Gem?&lt;/h3&gt;
 
 &lt;p&gt;A gem is essentially a Ruby plugin.&lt;/p&gt;
 
