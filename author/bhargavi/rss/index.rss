@@ -1,4 +1,4 @@
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Bhargavi Satpathy - Ruby Dust</title><description>Thoughts, stories and ideas.</description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Mon, 18 May 2015 04:24:44 GMT</lastBuildDate><atom:link href="http://localhost:2368/author/bhargavi/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title>Apache Kafka</title><description>&lt;p&gt;Kafka is a distributed, partitioned, replicated commit log service.It is also a high volume message oriented middleware. &lt;/p&gt;
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Bhargavi Satpathy - Ruby Dust</title><description>Thoughts, stories and ideas.</description><link>http://bhargavisatpathy.github.io/</link><generator>Ghost 0.5</generator><lastBuildDate>Mon, 08 Jun 2015 05:11:59 GMT</lastBuildDate><atom:link href="http://bhargavisatpathy.github.io/author/bhargavi/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title>Apache Kafka</title><description>&lt;p&gt;Kafka is a distributed, partitioned, replicated commit log service.It is also a high volume message oriented middleware. &lt;/p&gt;
 
 &lt;p&gt;Kafka maintains feeds of messages in categories called &lt;strong&gt;topics&lt;/strong&gt;. Processes that publish messages to a Kafka topic are called &lt;strong&gt;producers&lt;/strong&gt;. Processes that subscribe to topics and process the feed of published messages are called &lt;strong&gt;consumers&lt;/strong&gt;.&lt;/p&gt;
 
@@ -10,7 +10,7 @@
 
 &lt;p&gt;If all the consumer instances have different consumer groups, then this works like publish-subscribe and all messages are broadcast to all consumers.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src="http://localhost:2368/content/images/2015/05/kafka.png" alt="Delivery Model"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://bhargavisatpathy.github.io/content/images/2015/05/kafka.png" alt="Delivery Model"&gt;&lt;/p&gt;
 
 &lt;p&gt;With that let's get to it.&lt;/p&gt;
 
@@ -180,7 +180,7 @@ loop do
   end
 end&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;References: &lt;a href="http://kafka.apache.org/documentation.html#introduction"&gt;http://kafka.apache.org/documentation.html#introduction&lt;/a&gt;&lt;/p&gt;</description><link>http://localhost:2368/apache-kafka/</link><guid isPermaLink="false">47cb0998-81e4-4041-b918-95d2a7469d6d</guid><dc:creator>Bhargavi Satpathy</dc:creator><pubDate>Mon, 18 May 2015 04:16:39 GMT</pubDate></item><item><title>How to build a Ruby Gem?</title><description>&lt;h3 id="whatisagem"&gt;What is a Gem?&lt;/h3&gt;
+&lt;p&gt;References: &lt;a href="http://kafka.apache.org/documentation.html#introduction"&gt;http://kafka.apache.org/documentation.html#introduction&lt;/a&gt;&lt;/p&gt;</description><link>http://bhargavisatpathy.github.io/apache-kafka/</link><guid isPermaLink="false">47cb0998-81e4-4041-b918-95d2a7469d6d</guid><dc:creator>Bhargavi Satpathy</dc:creator><pubDate>Mon, 18 May 2015 04:16:39 GMT</pubDate></item><item><title>How to build a Ruby Gem?</title><description>&lt;h3 id="whatisagem"&gt;What is a Gem?&lt;/h3&gt;
 
 &lt;p&gt;A gem is essentially a Ruby plugin.&lt;/p&gt;
 
@@ -345,4 +345,4 @@ $ rake release&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;references: &lt;br&gt;
 &lt;a href="https://howistart.org/posts/ruby/1"&gt;https://howistart.org/posts/ruby/1&lt;/a&gt;
-&lt;a href="https://quickleft.com/blog/engineering-lunch-series-step-by-step-guide-to-building-your-first-ruby-gem/"&gt;Quickleft doc&lt;/a&gt;&lt;/p&gt;</description><link>http://localhost:2368/how-to-build-a-ruby-gem/</link><guid isPermaLink="false">9df908f0-316f-46eb-a97c-f99a88f30fec</guid><dc:creator>Bhargavi Satpathy</dc:creator><pubDate>Fri, 24 Apr 2015 04:16:17 GMT</pubDate></item></channel></rss>
+&lt;a href="https://quickleft.com/blog/engineering-lunch-series-step-by-step-guide-to-building-your-first-ruby-gem/"&gt;Quickleft doc&lt;/a&gt;&lt;/p&gt;</description><link>http://bhargavisatpathy.github.io/how-to-build-a-ruby-gem/</link><guid isPermaLink="false">9df908f0-316f-46eb-a97c-f99a88f30fec</guid><dc:creator>Bhargavi Satpathy</dc:creator><pubDate>Fri, 24 Apr 2015 04:16:17 GMT</pubDate></item></channel></rss>
